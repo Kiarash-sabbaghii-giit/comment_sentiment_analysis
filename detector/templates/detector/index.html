@@ -1,0 +1,511 @@
+<!-- detector/templates/detector/index.html -->
+{% extends 'detector/base.html' %}
+
+{% block title %}Home - Spam Detector Pro{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ===== CARD ===== */
+    .glass-card {
+        background: rgba(20, 20, 30, 0.7);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        padding: 40px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        transition: all 0.4s ease;
+    }
+
+    .glass-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+        border-color: rgba(124, 58, 237, 0.2);
+    }
+
+    /* ===== HEADER ===== */
+    .page-header {
+        text-align: center;
+        margin-bottom: 35px;
+    }
+
+    .page-header h1 {
+        font-size: 38px;
+        font-weight: 900;
+        background: linear-gradient(135deg, #a78bfa, #60a5fa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 10px;
+    }
+
+    .page-header p {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 16px;
+    }
+
+    /* ===== INPUT MODE TOGGLE ===== */
+    .mode-toggle {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 25px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 14px;
+        padding: 6px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .mode-btn {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 10px;
+        background: transparent;
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-family: inherit;
+    }
+
+    .mode-btn:hover {
+        color: white;
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .mode-btn.active {
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.3), rgba(37, 99, 235, 0.3));
+        color: white;
+        box-shadow: 0 5px 15px rgba(124, 58, 237, 0.2);
+    }
+
+    /* ===== TEXTAREA ===== */
+    textarea {
+        width: 100%;
+        padding: 18px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 2px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        font-size: 15px;
+        font-family: inherit;
+        color: white;
+        resize: vertical;
+        min-height: 150px;
+        transition: all 0.3s ease;
+    }
+
+    textarea:focus {
+        outline: none;
+        border-color: #7c3aed;
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 0 30px rgba(124, 58, 237, 0.1);
+    }
+
+    textarea::placeholder {
+        color: rgba(255, 255, 255, 0.25);
+    }
+
+    /* ===== BATCH INPUT ===== */
+    .batch-input {
+        display: none;
+    }
+
+    .batch-input.active {
+        display: block;
+    }
+
+    .batch-input textarea {
+        min-height: 250px;
+        font-size: 13px;
+        line-height: 1.8;
+    }
+
+    .batch-hint {
+        color: rgba(255, 255, 255, 0.3);
+        font-size: 12px;
+        margin-top: 8px;
+        padding: 0 5px;
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn-primary {
+        width: 100%;
+        padding: 18px;
+        background: linear-gradient(135deg, #7c3aed, #2563eb);
+        color: white;
+        border: none;
+        border-radius: 16px;
+        font-size: 18px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        font-family: inherit;
+        margin-top: 10px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(124, 58, 237, 0.4);
+    }
+
+    .btn-primary:active {
+        transform: translateY(0);
+    }
+
+    .btn-primary::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+        transform: scale(0);
+        transition: transform 0.5s;
+    }
+
+    .btn-primary:hover::after {
+        transform: scale(1);
+    }
+
+    .btn-primary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none !important;
+    }
+
+    /* ===== ERROR ===== */
+    .error {
+        background: rgba(239, 68, 68, 0.15);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #f87171;
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        animation: shake 0.5s ease;
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-10px); }
+        75% { transform: translateX(10px); }
+    }
+
+    /* ===== CHARACTER COUNTER ===== */
+    .char-counter {
+        display: flex;
+        justify-content: space-between;
+        color: rgba(255, 255, 255, 0.3);
+        font-size: 12px;
+        margin-top: 8px;
+        padding: 0 5px;
+    }
+
+    /* ===== SAMPLE COMMENTS ===== */
+    .samples {
+        margin-top: 30px;
+        padding-top: 25px;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .samples-title {
+        color: rgba(255, 255, 255, 0.3);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+
+    .sample-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .sample-btn {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        padding: 12px 16px;
+        border-radius: 12px;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: left;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: inherit;
+        width: 100%;
+    }
+
+    .sample-btn:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(124, 58, 237, 0.3);
+        color: white;
+        transform: translateX(5px) scale(1.02);
+    }
+
+    .sample-btn .badge {
+        font-size: 10px;
+        padding: 2px 10px;
+        border-radius: 10px;
+        background: rgba(239, 68, 68, 0.2);
+        color: #f87171;
+        flex-shrink: 0;
+        font-weight: 700;
+    }
+
+    .sample-btn .badge.ham {
+        background: rgba(34, 197, 94, 0.2);
+        color: #4ade80;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 600px) {
+        .glass-card {
+            padding: 25px 20px;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+        }
+
+        .sample-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .mode-btn {
+            font-size: 12px;
+            padding: 10px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <!-- Header -->
+    <div class="page-header">
+        <h1>🔍 Spam Detection</h1>
+        <p>Paste a comment or multiple comments to analyze</p>
+    </div>
+
+    <!-- Error -->
+    {% if error %}
+    <div class="error">
+        <i class="fas fa-exclamation-circle"></i>
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <!-- Mode Toggle -->
+    <div class="mode-toggle">
+        <button class="mode-btn active" data-mode="single" id="singleModeBtn">
+            <i class="fas fa-file-lines"></i>
+            Single Comment
+        </button>
+        <button class="mode-btn" data-mode="batch" id="batchModeBtn">
+            <i class="fas fa-layer-group"></i>
+            Batch Comments
+            <span style="font-size: 10px; background: rgba(124,58,237,0.3); padding: 2px 8px; border-radius: 8px;">NEW</span>
+        </button>
+    </div>
+
+    <!-- Form -->
+    <form method="POST" action="{% url 'detector:predict' %}" id="detectForm">
+        {% csrf_token %}
+
+        <!-- Single Comment Input -->
+        <div class="single-input" id="singleInput">
+            <textarea
+                name="comment"
+                id="commentInput"
+                placeholder="Paste your comment here..."
+                rows="5"
+            >{{ comment|default:'' }}</textarea>
+            <div class="char-counter">
+                <span id="charCount">0</span> characters
+                <span id="wordCount">0</span> words
+            </div>
+        </div>
+
+        <!-- Batch Input -->
+        <div class="batch-input" id="batchInput">
+            <textarea
+                name="batch_comments"
+                id="batchInput"
+                placeholder="Paste multiple comments (one per line)&#10;Example:&#10;Great post!&#10;Click here to win $1000!&#10;Thanks for sharing!"
+                rows="8"
+            ></textarea>
+            <div class="batch-hint">
+                <i class="fas fa-info-circle"></i>
+                Enter one comment per line. All comments will be analyzed.
+            </div>
+        </div>
+
+        <button type="submit" class="btn-primary" id="submitBtn">
+            <i class="fas fa-robot"></i>
+            <span id="btnText">Analyze</span>
+            <i class="fas fa-arrow-right"></i>
+        </button>
+    </form>
+
+    <!-- Sample Comments -->
+    <div class="samples">
+        <div class="samples-title">
+            <i class="fas fa-lightbulb"></i> Try Sample Comments
+        </div>
+        <div class="sample-grid">
+            <button class="sample-btn" data-comment="🔥 EXCLUSIVE! Make $10,000 in 24 hours! Click here: https://bit.ly/scam">
+                <i class="fas fa-bolt" style="color: #f87171;"></i>
+                <span>Spam Example</span>
+                <span class="badge">SPAM</span>
+            </button>
+            <button class="sample-btn" data-comment="Thanks for this amazing content! Really helpful and informative. Keep it up! 🙏">
+                <i class="fas fa-check-circle" style="color: #4ade80;"></i>
+                <span>Ham Example</span>
+                <span class="badge ham">HAM</span>
+            </button>
+            <button class="sample-btn" data-comment="🎯 CONGRATULATIONS! You've won an iPhone 15! Claim now at www.fake-prize.com">
+                <i class="fas fa-bolt" style="color: #f87171;"></i>
+                <span>Spam Example 2</span>
+                <span class="badge">SPAM</span>
+            </button>
+            <button class="sample-btn" data-comment="I've been looking for this solution everywhere. Thank you so much! ❤️">
+                <i class="fas fa-check-circle" style="color: #4ade80;"></i>
+                <span>Ham Example 2</span>
+                <span class="badge ham">HAM</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ===== MODE TOGGLE =====
+    const singleModeBtn = document.getElementById('singleModeBtn');
+    const batchModeBtn = document.getElementById('batchModeBtn');
+    const singleInput = document.getElementById('singleInput');
+    const batchInput = document.getElementById('batchInput');
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = document.getElementById('btnText');
+
+    singleModeBtn.addEventListener('click', function() {
+        this.classList.add('active');
+        batchModeBtn.classList.remove('active');
+        singleInput.style.display = 'block';
+        batchInput.style.display = 'none';
+        btnText.textContent = 'Analyze Comment';
+    });
+
+    batchModeBtn.addEventListener('click', function() {
+        this.classList.add('active');
+        singleModeBtn.classList.remove('active');
+        singleInput.style.display = 'none';
+        batchInput.style.display = 'block';
+        btnText.textContent = 'Analyze All Comments';
+    });
+
+    // ===== CHARACTER & WORD COUNTER =====
+    const commentInput = document.getElementById('commentInput');
+    const charCount = document.getElementById('charCount');
+    const wordCount = document.getElementById('wordCount');
+
+    commentInput.addEventListener('input', function() {
+        const text = this.value;
+        charCount.textContent = text.length;
+        const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+        wordCount.textContent = words;
+    });
+
+    // ===== SAMPLE COMMENTS =====
+    document.querySelectorAll('.sample-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const comment = this.dataset.comment;
+            commentInput.value = comment;
+            charCount.textContent = comment.length;
+            const words = comment.trim().split(/\s+/).length;
+            wordCount.textContent = words;
+            commentInput.focus();
+
+            // Visual feedback
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 200);
+        });
+    });
+
+    // ===== FORM SUBMIT =====
+    const form = document.getElementById('detectForm');
+
+    form.addEventListener('submit', function(e) {
+        const isBatch = batchModeBtn.classList.contains('active');
+        const input = isBatch ? document.getElementById('batchInput') : commentInput;
+
+        if (input.value.trim() === '') {
+            e.preventDefault();
+            showError('Please enter at least one comment to analyze!');
+            return;
+        }
+
+        // Disable button
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+    });
+
+    // ===== ERROR HANDLING =====
+    function showError(message) {
+        const existingError = document.querySelector('.error');
+        if (existingError) existingError.remove();
+
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error';
+        errorDiv.innerHTML = `
+            <i class="fas fa-exclamation-circle"></i>
+            ${message}
+        `;
+        form.parentNode.insertBefore(errorDiv, form);
+
+        setTimeout(() => {
+            errorDiv.style.opacity = '0';
+            setTimeout(() => errorDiv.remove(), 500);
+        }, 4000);
+    }
+
+    // ===== KEYBOARD SHORTCUT =====
+    document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.key === 'Enter') {
+            form.dispatchEvent(new Event('submit'));
+        }
+    });
+
+    // ===== AUTO-RESIZE =====
+    commentInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = this.scrollHeight + 'px';
+    });
+
+    // ===== INIT =====
+    // Set initial state
+    singleInput.style.display = 'block';
+    batchInput.style.display = 'none';
+
+    console.log('✅ Home page loaded!');
+    console.log('💡 Tip: Press Ctrl+Enter to submit');
+</script>
+{% endblock %}

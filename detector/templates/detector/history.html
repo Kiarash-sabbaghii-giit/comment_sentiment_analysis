@@ -1,0 +1,418 @@
+<!-- detector/templates/detector/history.html -->
+{% extends 'detector/base.html' %}
+
+{% block title %}History - Spam Detector Pro{% endblock %}
+
+{% block extra_css %}
+<style>
+    .history-card {
+        background: rgba(20, 20, 30, 0.7);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        padding: 40px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        min-height: 400px;
+    }
+
+    .history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .history-header h1 {
+        font-size: 28px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .history-header h1 i {
+        color: #7c3aed;
+    }
+
+    .history-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn-clear {
+        padding: 10px 20px;
+        background: rgba(239, 68, 68, 0.15);
+        color: #f87171;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-clear:hover {
+        background: rgba(239, 68, 68, 0.25);
+        transform: scale(1.05);
+    }
+
+    .btn-export {
+        padding: 10px 20px;
+        background: rgba(34, 197, 94, 0.15);
+        color: #4ade80;
+        border: 1px solid rgba(34, 197, 94, 0.2);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-export:hover {
+        background: rgba(34, 197, 94, 0.25);
+        transform: scale(1.05);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+    }
+
+    .empty-state .icon {
+        font-size: 80px;
+        margin-bottom: 20px;
+        opacity: 0.3;
+    }
+
+    .empty-state h3 {
+        color: rgba(255, 255, 255, 0.5);
+        margin-bottom: 10px;
+    }
+
+    .empty-state p {
+        color: rgba(255, 255, 255, 0.3);
+        font-size: 14px;
+    }
+
+    .history-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .history-item {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 14px;
+        padding: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.3s ease;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .history-item:hover {
+        background: rgba(255, 255, 255, 0.06);
+        transform: translateX(5px);
+        border-color: rgba(124, 58, 237, 0.2);
+    }
+
+    .history-item .comment {
+        flex: 1;
+        min-width: 150px;
+    }
+
+    .history-item .comment .text {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 14px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .history-item .comment .time {
+        color: rgba(255, 255, 255, 0.3);
+        font-size: 12px;
+        margin-top: 3px;
+    }
+
+    .history-item .result-tag {
+        padding: 5px 16px;
+        border-radius: 12px;
+        font-size: 13px;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .history-item .result-tag.spam {
+        background: rgba(239, 68, 68, 0.15);
+        color: #f87171;
+    }
+
+    .history-item .result-tag.ham {
+        background: rgba(34, 197, 94, 0.15);
+        color: #4ade80;
+    }
+
+    .history-item .confidence-bar-mini {
+        width: 100px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 2px;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .history-item .confidence-bar-mini .fill {
+        height: 100%;
+        border-radius: 2px;
+        transition: width 0.5s;
+    }
+
+    .history-item .delete-btn {
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.2);
+        cursor: pointer;
+        padding: 5px 10px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+
+    .history-item .delete-btn:hover {
+        color: #f87171;
+        background: rgba(239, 68, 68, 0.1);
+    }
+
+    .history-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .stat-mini {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 12px;
+        padding: 15px;
+        text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .stat-mini .number {
+        font-size: 24px;
+        font-weight: 800;
+        background: linear-gradient(135deg, #a78bfa, #60a5fa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stat-mini .label {
+        color: rgba(255, 255, 255, 0.3);
+        font-size: 12px;
+        margin-top: 3px;
+    }
+
+    @media (max-width: 600px) {
+        .history-card { padding: 25px 20px; }
+        .history-header { flex-direction: column; align-items: stretch; }
+        .history-actions { flex-wrap: wrap; }
+        .history-item { flex-direction: column; align-items: stretch; }
+        .history-item .confidence-bar-mini { width: 100%; }
+        .history-stats { grid-template-columns: 1fr 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="history-card">
+    <!-- Header -->
+    <div class="history-header">
+        <h1>
+            <i class="fas fa-clock-rotate-left"></i>
+            Analysis History
+        </h1>
+        <div class="history-actions">
+            <button class="btn-export" onclick="exportHistory()">
+                <i class="fas fa-download"></i> Export
+            </button>
+            <button class="btn-clear" onclick="clearHistory()">
+                <i class="fas fa-trash-can"></i> Clear All
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="history-stats" id="historyStats">
+        <div class="stat-mini">
+            <div class="number" id="totalCount">0</div>
+            <div class="label">Total Analyses</div>
+        </div>
+        <div class="stat-mini">
+            <div class="number" id="spamCount" style="background: linear-gradient(135deg, #f87171, #ef4444); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">0</div>
+            <div class="label">Spam Detected</div>
+        </div>
+        <div class="stat-mini">
+            <div class="number" id="hamCount" style="background: linear-gradient(135deg, #4ade80, #22c55e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">0</div>
+            <div class="label">Clean Comments</div>
+        </div>
+        <div class="stat-mini">
+            <div class="number" id="avgConfidence">0%</div>
+            <div class="label">Avg Confidence</div>
+        </div>
+    </div>
+
+    <!-- History List -->
+    <div id="historyList">
+        <div class="empty-state">
+            <div class="icon">📭</div>
+            <h3>No History Yet</h3>
+            <p>Analyze some comments to build your history here.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ===== LOAD HISTORY =====
+    function loadHistory() {
+        const history = JSON.parse(localStorage.getItem('commentHistory') || '[]');
+        const list = document.getElementById('historyList');
+
+        if (history.length === 0) {
+            list.innerHTML = `
+                <div class="empty-state">
+                    <div class="icon">📭</div>
+                    <h3>No History Yet</h3>
+                    <p>Analyze some comments to build your history here.</p>
+                </div>
+            `;
+            return;
+        }
+
+        let html = '<div class="history-list">';
+        history.forEach(item => {
+            const isSpam = item.result === 'spam';
+            const confidence = isSpam ? item.spam_probability : item.ham_probability;
+            const time = new Date(item.timestamp).toLocaleString();
+            const shortComment = item.comment.length > 80 ?
+                item.comment.slice(0, 80) + '...' :
+                item.comment;
+
+            html += `
+                <div class="history-item" data-id="${item.id}">
+                    <div class="comment">
+                        <div class="text">${escapeHtml(shortComment)}</div>
+                        <div class="time"><i class="far fa-clock"></i> ${time}</div>
+                    </div>
+                    <div class="result-tag ${isSpam ? 'spam' : 'ham'}">
+                        ${isSpam ? '🚫 SPAM' : '✅ HAM'}
+                    </div>
+                    <div class="confidence-bar-mini">
+                        <div class="fill" style="width: ${confidence}%; background: ${isSpam ? '#ef4444' : '#22c55e'};"></div>
+                    </div>
+                    <button class="delete-btn" onclick="deleteHistoryItem(${item.id})" title="Delete">
+                        <i class="fas fa-xmark"></i>
+                    </button>
+                </div>
+            `;
+        });
+        html += '</div>';
+        list.innerHTML = html;
+
+        // Update stats
+        updateStats(history);
+    }
+
+    // ===== UPDATE STATS =====
+    function updateStats(history) {
+        const total = history.length;
+        const spam = history.filter(h => h.result === 'spam').length;
+        const ham = total - spam;
+        const avgConf = history.reduce((sum, h) => sum + h.confidence, 0) / total;
+
+        document.getElementById('totalCount').textContent = total;
+        document.getElementById('spamCount').textContent = spam;
+        document.getElementById('hamCount').textContent = ham;
+        document.getElementById('avgConfidence').textContent = avgConf.toFixed(1) + '%';
+
+        // Update badge
+        const badge = document.getElementById('historyBadge');
+        if (badge) {
+            badge.textContent = total;
+            badge.style.display = total > 0 ? 'inline' : 'none';
+        }
+    }
+
+    // ===== DELETE ITEM =====
+    function deleteHistoryItem(id) {
+        if (!confirm('Delete this history entry?')) return;
+
+        let history = JSON.parse(localStorage.getItem('commentHistory') || '[]');
+        history = history.filter(item => item.id !== id);
+        localStorage.setItem('commentHistory', JSON.stringify(history));
+        loadHistory();
+    }
+
+    // ===== CLEAR HISTORY =====
+    function clearHistory() {
+        if (!confirm('Are you sure you want to delete all history?')) return;
+
+        localStorage.removeItem('commentHistory');
+        loadHistory();
+    }
+
+    // ===== EXPORT HISTORY =====
+    function exportHistory() {
+        const history = JSON.parse(localStorage.getItem('commentHistory') || '[]');
+        if (history.length === 0) {
+            alert('No history to export!');
+            return;
+        }
+
+        // Create CSV
+        let csv = 'Date,Comment,Result,Confidence,Spam%,Ham%\n';
+        history.forEach(item => {
+            const date = new Date(item.timestamp).toLocaleString();
+            const comment = item.comment.replace(/,/g, ';').replace(/"/g, '""');
+            csv += `"${date}","${comment}","${item.result}",${item.confidence.toFixed(1)},${item.spam_probability.toFixed(1)},${item.ham_probability.toFixed(1)}\n`;
+        });
+
+        // Download
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `spam_history_${new Date().toISOString().slice(0,10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    // ===== ESCAPE HTML =====
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // ===== LOAD ON PAGE =====
+    document.addEventListener('DOMContentLoaded', loadHistory);
+
+    console.log('📊 History page loaded!');
+</script>
+{% endblock %}

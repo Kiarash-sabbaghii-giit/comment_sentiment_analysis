@@ -1,0 +1,177 @@
+<!-- detector/templates/detector/about.html -->
+{% extends 'detector/base.html' %}
+
+{% block title %}About - Spam Detector Pro{% endblock %}
+
+{% block extra_css %}
+<style>
+    .about-card {
+        background: rgba(20, 20, 30, 0.7);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        padding: 40px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .about-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .about-header .icon {
+        font-size: 80px;
+        margin-bottom: 15px;
+        display: block;
+    }
+
+    .about-header h1 {
+        font-size: 32px;
+        font-weight: 800;
+        background: linear-gradient(135deg, #a78bfa, #60a5fa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .about-header p {
+        color: rgba(255, 255, 255, 0.5);
+        margin-top: 10px;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin: 30px 0;
+    }
+
+    .feature-item {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 16px;
+        padding: 25px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.3s ease;
+    }
+
+    .feature-item:hover {
+        background: rgba(255, 255, 255, 0.06);
+        transform: translateY(-5px);
+        border-color: rgba(124, 58, 237, 0.2);
+    }
+
+    .feature-item .icon {
+        font-size: 30px;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    .feature-item h3 {
+        color: white;
+        margin-bottom: 8px;
+        font-size: 18px;
+    }
+
+    .feature-item p {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .tech-stack {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 16px;
+        padding: 25px;
+        margin-top: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .tech-stack h3 {
+        margin-bottom: 15px;
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .tech-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .tech-tag {
+        padding: 8px 16px;
+        background: rgba(124, 58, 237, 0.15);
+        border: 1px solid rgba(124, 58, 237, 0.2);
+        border-radius: 10px;
+        font-size: 13px;
+        color: #a78bfa;
+        transition: all 0.3s ease;
+    }
+
+    .tech-tag:hover {
+        background: rgba(124, 58, 237, 0.25);
+        transform: scale(1.05);
+    }
+
+    @media (max-width: 600px) {
+        .about-card { padding: 25px 20px; }
+        .features-grid { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="about-card">
+    <div class="about-header">
+        <span class="icon">🛡️</span>
+        <h1>Spam Detector Pro</h1>
+        <p>Advanced AI-Powered Comment Analysis System</p>
+    </div>
+
+    <div class="features-grid">
+        <div class="feature-item">
+            <span class="icon">🧠</span>
+            <h3>Machine Learning</h3>
+            <p>Uses state-of-the-art ML algorithms to detect spam with high accuracy</p>
+        </div>
+        <div class="feature-item">
+            <span class="icon">⚡</span>
+            <h3>Real-time Analysis</h3>
+            <p>Instant feedback on your comments with detailed statistics</p>
+        </div>
+        <div class="feature-item">
+            <span class="icon">📊</span>
+            <h3>Batch Processing</h3>
+            <p>Analyze multiple comments at once with the batch mode</p>
+        </div>
+        <div class="feature-item">
+            <span class="icon">💾</span>
+            <h3>History Tracking</h3>
+            <p>All your analyses are saved locally for future reference</p>
+        </div>
+        <div class="feature-item">
+            <span class="icon">📱</span>
+            <h3>Responsive Design</h3>
+            <p>Works perfectly on all devices from desktop to mobile</p>
+        </div>
+        <div class="feature-item">
+            <span class="icon">🔒</span>
+            <h3>Privacy First</h3>
+            <p>All data stays on your device, nothing is sent to servers</p>
+        </div>
+    </div>
+
+    <div class="tech-stack">
+        <h3>🛠️ Tech Stack</h3>
+        <div class="tech-tags">
+            <span class="tech-tag">Django</span>
+            <span class="tech-tag">Python</span>
+            <span class="tech-tag">Scikit-learn</span>
+            <span class="tech-tag">JavaScript</span>
+            <span class="tech-tag">HTML5</span>
+            <span class="tech-tag">CSS3</span>
+            <span class="tech-tag">Chart.js</span>
+            <span class="tech-tag">Font Awesome</span>
+        </div>
+    </div>
+</div>
+{% endblock %}
