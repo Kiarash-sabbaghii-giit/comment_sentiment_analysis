@@ -1,55 +1,79 @@
 <!-- detector/templates/detector/result.html -->
 {% extends 'detector/base.html' %}
 
-{% block title %}Result - Spam Detector Pro{% endblock %}
+{% block title %}Result - SentimentAI Pro{% endblock %}
 
 {% block extra_css %}
 <style>
     .result-card {
-        background: rgba(20, 20, 30, 0.7);
-        backdrop-filter: blur(20px);
-        border-radius: 24px;
-        padding: 40px;
+        background: rgba(20, 20, 30, 0.6);
+        backdrop-filter: blur(40px) saturate(1.5);
+        -webkit-backdrop-filter: blur(40px) saturate(1.5);
+        border-radius: 32px;
+        padding: 45px;
         border: 1px solid rgba(255, 255, 255, 0.06);
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-        animation: slideUp 0.8s ease-out;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+        animation: resultSlide 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
     }
 
-    @keyframes slideUp {
-        from { opacity: 0; transform: translateY(30px); }
-        to { opacity: 1; transform: translateY(0); }
+    .result-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle at 30% 20%, rgba(124, 58, 237, 0.03), transparent 60%);
+        pointer-events: none;
     }
 
+    @keyframes resultSlide {
+        from {
+            opacity: 0;
+            transform: translateY(40px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    /* ===== HEADER ===== */
     .result-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 25px;
+        margin-bottom: 30px;
         flex-wrap: wrap;
         gap: 15px;
     }
 
     .back-btn {
-        color: rgba(255, 255, 255, 0.5);
+        color: rgba(255, 255, 255, 0.4);
         text-decoration: none;
         display: flex;
         align-items: center;
         gap: 10px;
-        padding: 10px 20px;
-        border-radius: 12px;
-        background: rgba(255, 255, 255, 0.05);
-        transition: all 0.3s ease;
+        padding: 10px 22px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         font-size: 14px;
+        font-weight: 500;
     }
 
     .back-btn:hover {
         color: white;
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.06);
         transform: translateX(-5px);
+        border-color: rgba(124, 58, 237, 0.2);
     }
 
     .result-badge {
-        padding: 10px 25px;
+        padding: 10px 28px;
         border-radius: 20px;
         font-size: 16px;
         font-weight: 700;
@@ -57,269 +81,365 @@
         letter-spacing: 1px;
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
         animation: pulseBadge 2s ease-in-out infinite;
     }
 
-    .result-badge.spam {
-        background: rgba(239, 68, 68, 0.2);
-        color: #f87171;
-        border: 1px solid rgba(239, 68, 68, 0.3);
-    }
-
-    .result-badge.ham {
-        background: rgba(34, 197, 94, 0.2);
+    .result-badge.happy {
+        background: rgba(34, 197, 94, 0.12);
         color: #4ade80;
-        border: 1px solid rgba(34, 197, 94, 0.3);
+        border: 1px solid rgba(34, 197, 94, 0.2);
     }
 
+    .result-badge.sad {
+        background: rgba(239, 68, 68, 0.12);
+        color: #f87171;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    /* ===== RESULT ICON ===== */
     .result-icon {
         text-align: center;
-        margin: 30px 0;
+        margin: 30px 0 25px;
     }
 
-    .result-icon .icon {
-        font-size: 100px;
-        animation: bounce 2s ease-in-out infinite;
+    .result-icon .emoji {
+        font-size: 120px;
+        display: block;
+        animation: bounceEmoji 2s ease-in-out infinite;
+        line-height: 1;
     }
 
-    @keyframes bounce {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.1); }
+    @keyframes bounceEmoji {
+        0%, 100% { transform: scale(1) rotate(0deg); }
+        25% { transform: scale(1.1) rotate(-5deg); }
+        75% { transform: scale(1.1) rotate(5deg); }
     }
 
     .result-icon .label {
-        font-size: 36px;
+        font-size: 38px;
         font-weight: 800;
         margin-top: 10px;
     }
 
-    .result-icon .label.spam { color: #f87171; }
-    .result-icon .label.ham { color: #4ade80; }
+    .result-icon .label.happy {
+        background: linear-gradient(135deg, #4ade80, #22c55e);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .result-icon .label.sad {
+        background: linear-gradient(135deg, #f87171, #ef4444);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
 
     .result-icon .confidence {
-        color: rgba(255, 255, 255, 0.5);
-        font-size: 16px;
+        color: rgba(255, 255, 255, 0.3);
+        font-size: 15px;
         margin-top: 5px;
     }
 
+    .result-icon .confidence strong {
+        color: rgba(255, 255, 255, 0.6);
+        font-weight: 600;
+    }
+
+    /* ===== COMMENT PREVIEW ===== */
     .comment-preview {
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 16px;
-        padding: 20px;
-        margin: 20px 0;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 18px;
+        padding: 22px 25px;
+        margin: 25px 0;
         border-left: 4px solid #7c3aed;
         transition: all 0.3s ease;
     }
 
     .comment-preview:hover {
-        background: rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.05);
         transform: translateX(5px);
     }
 
     .comment-preview .label {
-        color: rgba(255, 255, 255, 0.4);
-        font-size: 12px;
+        color: rgba(255, 255, 255, 0.25);
+        font-size: 11px;
         text-transform: uppercase;
-        letter-spacing: 1px;
+        letter-spacing: 2px;
         margin-bottom: 8px;
     }
 
     .comment-preview .text {
-        color: white;
+        color: rgba(255, 255, 255, 0.85);
         font-size: 16px;
-        line-height: 1.6;
+        line-height: 1.7;
         word-wrap: break-word;
+        direction: ltr;
+        text-align: left;
     }
 
+    /* برای متن فارسی */
+    .comment-preview .text[lang="fa"] {
+        direction: rtl;
+        text-align: right;
+    }
+
+    .comment-preview .cleaned {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid rgba(255, 255, 255, 0.04);
+        color: rgba(255, 255, 255, 0.25);
+        font-size: 13px;
+        direction: ltr;
+        text-align: left;
+    }
+
+    /* ===== STATS ===== */
     .stats-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 15px;
+        gap: 16px;
         margin: 25px 0;
     }
 
     .stat-card {
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 16px;
-        padding: 20px;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 18px;
+        padding: 22px;
         text-align: center;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .stat-card:hover {
         transform: translateY(-5px);
-        background: rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(124, 58, 237, 0.1);
     }
 
     .stat-card .value {
-        font-size: 32px;
+        font-size: 36px;
         font-weight: 800;
-        margin-bottom: 5px;
+        margin-bottom: 4px;
     }
 
-    .stat-card .value.spam-value { color: #f87171; }
-    .stat-card .value.ham-value { color: #4ade80; }
+    .stat-card .value.happy-value {
+        color: #4ade80;
+    }
+
+    .stat-card .value.sad-value {
+        color: #f87171;
+    }
+
     .stat-card .stat-label {
-        color: rgba(255, 255, 255, 0.4);
-        font-size: 14px;
+        color: rgba(255, 255, 255, 0.3);
+        font-size: 13px;
+        font-weight: 500;
     }
 
+    .stat-card .stat-label i {
+        margin-right: 6px;
+    }
+
+    /* ===== PROGRESS ===== */
     .progress-container {
-        margin: 20px 0;
+        margin: 25px 0;
     }
 
     .progress-item {
-        margin: 12px 0;
+        margin: 14px 0;
     }
 
     .progress-item .progress-label {
         display: flex;
         justify-content: space-between;
         font-size: 14px;
-        margin-bottom: 5px;
-        color: rgba(255, 255, 255, 0.6);
+        margin-bottom: 6px;
+        color: rgba(255, 255, 255, 0.5);
+        font-weight: 500;
+    }
+
+    .progress-item .progress-label .perc {
+        font-weight: 700;
     }
 
     .progress-bar {
         height: 8px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 6px;
         overflow: hidden;
+        position: relative;
     }
 
     .progress-fill {
         height: 100%;
-        border-radius: 4px;
+        border-radius: 6px;
         width: 0%;
-        transition: width 1.5s ease;
+        transition: width 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
     }
 
-    .progress-fill.spam-fill {
-        background: linear-gradient(90deg, #ef4444, #dc2626);
+    .progress-fill::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        animation: shimmerBar 2s ease-in-out infinite;
     }
 
-    .progress-fill.ham-fill {
-        background: linear-gradient(90deg, #22c55e, #16a34a);
+    @keyframes shimmerBar {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
     }
 
+    .progress-fill.happy-fill {
+        background: linear-gradient(90deg, #22c55e, #4ade80);
+    }
+
+    .progress-fill.sad-fill {
+        background: linear-gradient(90deg, #ef4444, #f87171);
+    }
+
+    /* ===== BUTTONS ===== */
     .action-buttons {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 12px;
-        margin-top: 25px;
+        margin-top: 30px;
     }
 
     .btn-primary, .btn-secondary {
-        padding: 15px;
+        padding: 16px;
         border: none;
-        border-radius: 14px;
-        font-size: 16px;
+        border-radius: 16px;
+        font-size: 15px;
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         text-decoration: none;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         gap: 10px;
-        font-family: inherit;
+        font-family: 'Inter', sans-serif;
     }
 
     .btn-primary {
-        background: linear-gradient(135deg, #7c3aed, #2563eb);
+        background: linear-gradient(135deg, #7c3aed, #3b82f6);
         color: white;
+        box-shadow: 0 10px 30px rgba(124, 58, 237, 0.2);
     }
 
     .btn-primary:hover {
         transform: translateY(-3px);
-        box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
+        box-shadow: 0 20px 50px rgba(124, 58, 237, 0.3);
     }
 
     .btn-secondary {
-        background: rgba(255, 255, 255, 0.05);
+        background: rgba(255, 255, 255, 0.04);
         color: white;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.06);
     }
 
     .btn-secondary:hover {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.08);
         transform: translateY(-3px);
+        border-color: rgba(124, 58, 237, 0.2);
     }
 
     .btn-success {
         background: linear-gradient(135deg, #22c55e, #16a34a);
         color: white;
-        padding: 15px;
+        padding: 16px;
         border: none;
-        border-radius: 14px;
-        font-size: 16px;
+        border-radius: 16px;
+        font-size: 15px;
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         text-decoration: none;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         gap: 10px;
-        font-family: inherit;
+        font-family: 'Inter', sans-serif;
+        box-shadow: 0 10px 30px rgba(34, 197, 94, 0.2);
     }
 
     .btn-success:hover {
         transform: translateY(-3px);
-        box-shadow: 0 10px 30px rgba(34, 197, 94, 0.3);
+        box-shadow: 0 20px 50px rgba(34, 197, 94, 0.3);
     }
 
-    .batch-results {
-        margin-top: 20px;
+    /* ===== CONFETTI ===== */
+    .confetti-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        z-index: 999;
+        overflow: hidden;
     }
 
-    .batch-item {
-        background: rgba(255, 255, 255, 0.03);
-        border-radius: 12px;
-        padding: 15px;
-        margin: 10px 0;
-        border-left: 3px solid #7c3aed;
-        transition: all 0.3s ease;
+    .confetti {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        animation: confettiFall linear forwards;
     }
 
-    .batch-item:hover {
-        background: rgba(255, 255, 255, 0.06);
-        transform: translateX(5px);
+    @keyframes confettiFall {
+        0% {
+            transform: translateY(-20px) rotate(0deg) scale(0);
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(110vh) rotate(720deg) scale(1);
+            opacity: 0;
+        }
     }
 
-    .batch-item .comment-text {
-        color: rgba(255, 255, 255, 0.7);
-        font-size: 14px;
-    }
-
-    .batch-item .result-tag {
-        display: inline-block;
-        padding: 3px 12px;
-        border-radius: 10px;
-        font-size: 12px;
-        font-weight: 700;
-        margin-top: 5px;
-    }
-
-    .batch-item .result-tag.spam {
-        background: rgba(239, 68, 68, 0.2);
-        color: #f87171;
-    }
-
-    .batch-item .result-tag.ham {
-        background: rgba(34, 197, 94, 0.2);
-        color: #4ade80;
-    }
-
+    /* ===== RESPONSIVE ===== */
     @media (max-width: 600px) {
-        .result-card { padding: 25px 20px; }
-        .stats-grid { grid-template-columns: 1fr; }
-        .action-buttons { grid-template-columns: 1fr; }
-        .result-icon .icon { font-size: 70px; }
-        .result-icon .label { font-size: 28px; }
-        .result-header { flex-direction: column; align-items: stretch; }
+        .result-card {
+            padding: 28px 20px;
+            border-radius: 24px;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .action-buttons {
+            grid-template-columns: 1fr;
+        }
+
+        .result-icon .emoji {
+            font-size: 80px;
+        }
+
+        .result-icon .label {
+            font-size: 28px;
+        }
+
+        .result-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .back-btn {
+            justify-content: center;
+        }
+
+        .result-badge {
+            justify-content: center;
+        }
     }
 </style>
 {% endblock %}
@@ -332,48 +452,55 @@
             <i class="fas fa-arrow-left"></i>
             Back
         </a>
-        <span class="result-badge {% if result.label == 'spam' %}spam{% else %}ham{% endif %}">
-            <i class="fas {% if result.label == 'spam' %}fa-exclamation-triangle{% else %}fa-check-circle{% endif %}"></i>
+        <span class="result-badge {% if result.label == 'happy' %}happy{% else %}sad{% endif %}">
+            <i class="fas {% if result.label == 'happy' %}fa-smile{% else %}fa-frown{% endif %}"></i>
             {{ result.label|upper }}
         </span>
     </div>
 
     <!-- Result -->
     <div class="result-icon">
-        <div class="icon">
-            {% if result.label == 'spam' %}🚫{% else %}✅{% endif %}
-        </div>
-        <div class="label {% if result.label == 'spam' %}spam{% else %}ham{% endif %}">
-            {% if result.label == 'spam' %}SPAM DETECTED{% else %}CLEAN COMMENT{% endif %}
+        <span class="emoji">{{ result.emoji }}</span>
+        <div class="label {% if result.label == 'happy' %}happy{% else %}sad{% endif %}">
+            {% if result.label == 'happy' %}
+                😊 Happy
+            {% else %}
+                😞 Sad
+            {% endif %}
         </div>
         <div class="confidence">
-            Confidence: {{ result.confidence|floatformat:1 }}%
-            {% if result.model_used %}
-            • Model: {{ result.model_used|title }}
-            {% endif %}
+            Confidence: <strong>{{ result.confidence|floatformat:1 }}%</strong>
         </div>
     </div>
 
     <!-- Comment -->
     <div class="comment-preview">
-        <div class="label"><i class="fas fa-quote-left"></i> Analyzed Comment</div>
-        <div class="text">"{{ comment }}"</div>
+        <div class="label">
+            <i class="fas fa-quote-left"></i> Analyzed Text
+        </div>
+        <div class="text" id="commentText">"{{ comment }}"</div>
+        {% if result.cleaned_text %}
+        <div class="cleaned">
+            <i class="fas fa-broom"></i>
+            Cleaned: "{{ result.cleaned_text }}"
+        </div>
+        {% endif %}
     </div>
 
     <!-- Stats -->
     <div class="stats-grid">
         <div class="stat-card">
-            <div class="value spam-value">{{ result.spam_probability|floatformat:1 }}%</div>
+            <div class="value happy-value">{{ result.happy_probability|floatformat:1 }}%</div>
             <div class="stat-label">
-                <i class="fas fa-exclamation-triangle" style="color: #f87171;"></i>
-                Spam Probability
+                <i class="fas fa-smile" style="color: #4ade80;"></i>
+                Happy Probability
             </div>
         </div>
         <div class="stat-card">
-            <div class="value ham-value">{{ result.ham_probability|floatformat:1 }}%</div>
+            <div class="value sad-value">{{ result.sad_probability|floatformat:1 }}%</div>
             <div class="stat-label">
-                <i class="fas fa-check-circle" style="color: #4ade80;"></i>
-                Ham Probability
+                <i class="fas fa-frown" style="color: #f87171;"></i>
+                Sad Probability
             </div>
         </div>
     </div>
@@ -382,20 +509,20 @@
     <div class="progress-container">
         <div class="progress-item">
             <div class="progress-label">
-                <span><i class="fas fa-exclamation-triangle" style="color: #f87171;"></i> Spam</span>
-                <span>{{ result.spam_probability|floatformat:1 }}%</span>
+                <span><i class="fas fa-smile" style="color: #4ade80;"></i> Happy</span>
+                <span class="perc">{{ result.happy_probability|floatformat:1 }}%</span>
             </div>
             <div class="progress-bar">
-                <div class="progress-fill spam-fill" id="spamBar"></div>
+                <div class="progress-fill happy-fill" id="happyBar"></div>
             </div>
         </div>
         <div class="progress-item">
             <div class="progress-label">
-                <span><i class="fas fa-check-circle" style="color: #4ade80;"></i> Ham</span>
-                <span>{{ result.ham_probability|floatformat:1 }}%</span>
+                <span><i class="fas fa-frown" style="color: #f87171;"></i> Sad</span>
+                <span class="perc">{{ result.sad_probability|floatformat:1 }}%</span>
             </div>
             <div class="progress-bar">
-                <div class="progress-fill ham-fill" id="hamBar"></div>
+                <div class="progress-fill sad-fill" id="sadBar"></div>
             </div>
         </div>
     </div>
@@ -414,12 +541,25 @@
 </div>
 
 <script>
+    // ===== DETECT PERSIAN TEXT =====
+    document.addEventListener('DOMContentLoaded', function() {
+        const commentText = document.getElementById('commentText');
+        const text = commentText.textContent;
+        // Check if contains Persian characters
+        const persianRegex = /[\u0600-\u06FF]/;
+        if (persianRegex.test(text)) {
+            commentText.setAttribute('lang', 'fa');
+            commentText.style.direction = 'rtl';
+            commentText.style.textAlign = 'right';
+        }
+    });
+
     // ===== ANIMATE PROGRESS BARS =====
     document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
-            document.getElementById('spamBar').style.width = '{{ result.spam_probability }}%';
-            document.getElementById('hamBar').style.width = '{{ result.ham_probability }}%';
-        }, 300);
+            document.getElementById('happyBar').style.width = '{{ result.happy_probability }}%';
+            document.getElementById('sadBar').style.width = '{{ result.sad_probability }}%';
+        }, 400);
     });
 
     // ===== SAVE TO HISTORY =====
@@ -429,8 +569,8 @@
             id: Date.now(),
             comment: '{{ comment|escapejs }}',
             result: '{{ result.label }}',
-            spam_probability: {{ result.spam_probability }},
-            ham_probability: {{ result.ham_probability }},
+            happy_probability: {{ result.happy_probability }},
+            sad_probability: {{ result.sad_probability }},
             confidence: {{ result.confidence }},
             timestamp: new Date().toISOString()
         };
@@ -449,52 +589,55 @@
         const btn = event.target;
         const originalText = btn.innerHTML;
         btn.innerHTML = '<i class="fas fa-check"></i> Saved!';
-        btn.style.background = 'rgba(34, 197, 94, 0.2)';
+        btn.style.background = 'rgba(34, 197, 94, 0.15)';
         btn.style.color = '#4ade80';
+        btn.style.border = '1px solid rgba(34, 197, 94, 0.2)';
 
         setTimeout(() => {
             btn.innerHTML = originalText;
             btn.style.background = '';
             btn.style.color = '';
+            btn.style.border = '';
         }, 2000);
     }
 
-    // ===== CONFETTI EFFECT FOR HAM =====
-    {% if result.label == 'ham' and result.confidence > 80 %}
+    // ===== CONFETTI EFFECT FOR HAPPY =====
+    {% if result.label == 'happy' and result.confidence > 70 %}
     document.addEventListener('DOMContentLoaded', function() {
-        const emojis = ['🎉', '✨', '🌟', '💫', '⭐', '👏', '🎊'];
-        for (let i = 0; i < 20; i++) {
-            setTimeout(() => {
-                const el = document.createElement('div');
-                el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-                el.style.cssText = `
-                    position: fixed;
-                    left: ${Math.random() * 100}%;
-                    top: -20px;
-                    font-size: ${Math.random() * 30 + 20}px;
-                    pointer-events: none;
-                    z-index: 1000;
-                    animation: fall ${Math.random() * 3 + 2}s linear;
-                `;
-                document.body.appendChild(el);
-                setTimeout(() => el.remove(), 5000);
-            }, i * 150);
-        }
-    });
+        const container = document.createElement('div');
+        container.className = 'confetti-container';
+        document.body.appendChild(container);
 
-    // Add fall animation
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes fall {
-            to {
-                transform: translateY(110vh) rotate(${Math.random() * 720}deg);
-                opacity: 0;
-            }
+        const colors = ['#4ade80', '#22c55e', '#fbbf24', '#f472b6', '#60a5fa', '#a78bfa'];
+        const emojis = ['🎉', '✨', '🌟', '💫', '⭐', '🎊', '💖'];
+
+        for (let i = 0; i < 50; i++) {
+            setTimeout(() => {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                const isEmoji = Math.random() > 0.5;
+                if (isEmoji) {
+                    confetti.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                    confetti.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                } else {
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                    confetti.style.width = (Math.random() * 10 + 5) + 'px';
+                    confetti.style.height = (Math.random() * 10 + 5) + 'px';
+                }
+                confetti.style.left = (Math.random() * 100) + '%';
+                confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                confetti.style.animationDelay = (Math.random() * 0.5) + 's';
+                container.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 5000);
+            }, i * 80);
         }
-    `;
-    document.head.appendChild(style);
+
+        setTimeout(() => container.remove(), 6000);
+    });
     {% endif %}
 
     console.log('✅ Result page loaded!');
+    console.log(`📊 Happy: {{ result.happy_probability }}%, Sad: {{ result.sad_probability }}%`);
 </script>
 {% endblock %}
