@@ -1,7 +1,7 @@
 <p align="center">
 </p>
 
-<h1 align="center">🇮🇷 Persian Sentiment Analysis</h1>
+<h1 align="center"> Persian Sentiment Analysis</h1>
 
 <p align="center">
   <strong>Machine Learning + Django Web Application for Persian Sentiment Classification</strong>
