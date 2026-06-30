@@ -39,7 +39,17 @@ A quick walkthrough of the complete workflow, including:
 
 <br>
 
-<img src="[demo/demo.gif]" alt="Application Demo" width="100%">
+# 🎥 Demo
+
+<div align="center">
+
+### 🚀 See the Application in Action
+
+<br>
+
+![Demo](demo/demo.gif)
+
+</div>
 
 </div>
 
