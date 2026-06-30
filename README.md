@@ -1,87 +1,119 @@
-🇮🇷 Persian Sentiment Analysis (Machine Learning + Django)
+<p align="center">
+  <img src="assets/banner.png" alt="Persian Sentiment Analysis Banner">
+</p>
 
-A complete Persian Sentiment Analysis project built with Python, Scikit-learn, and Django.
+<h1 align="center">🇮🇷 Persian Sentiment Analysis</h1>
 
-The project is divided into two main phases:
+<p align="center">
+  <strong>Machine Learning + Django Web Application for Persian Sentiment Classification</strong>
+</p>
 
-1. Machine Learning Pipeline (Jupyter Notebook)
-2. Deployment as a Django Web Application
+<p align="center">
+A complete end-to-end sentiment analysis project that trains multiple Machine Learning models on Persian SnappFood reviews and deploys the best-performing model as a modern Django web application.
+</p>
 
-The model is trained on 2,400 Persian SnappFood reviews and classifies each review into one of two sentiment classes:
+<p align="center">
 
-Label| Sentiment
-0| Positive (Happy 😊)
-1| Negative (Sad 😞)
+![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python)
+![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-ML-orange?logo=scikitlearn)
+![Django](https://img.shields.io/badge/Django-Framework-green?logo=django)
+![License](https://img.shields.io/badge/License-MIT-blue)
 
-The web application supports Persian text, performs the same preprocessing used during training, predicts sentiment, and provides confidence scores for both classes.
-
----
-
-🎥 Demo
-
-«Demo Video: (Coming Soon)»
-
-[ Add your demo video here ]
+</p>
 
 ---
 
-✨ Features
+# 🎥 Demo
 
-Machine Learning
+<div align="center">
 
-- Data cleaning
-  
+### 🚀 See the Application in Action
+
+A quick walkthrough of the complete workflow, including:
+
+✅ Real-time sentiment prediction  
+✅ Batch prediction  
+✅ Probability visualization  
+✅ Prediction history  
+✅ CSV export  
+✅ Responsive dark-themed UI
+
+<br>
+
+<img src="demo/demo.gif" alt="Application Demo" width="100%">
+
+</div>
+
+---
+
+# 📖 About the Project
+
+This project demonstrates a complete **Persian Sentiment Analysis** pipeline, starting from data preprocessing and Machine Learning experiments to deploying the trained model as a modern Django web application.
+
+The model was trained using **2,400 Persian SnappFood reviews** and performs binary sentiment classification.
+
+| Label | Sentiment |
+|:-----:|-----------|
+| **0** | Positive (Happy 😊) |
+| **1** | Negative (Sad 😞) |
+
+The application fully supports **Persian text** and applies the same preprocessing pipeline used during training before making predictions.
+
+---
+
+# ✨ Features
+
+## 🤖 Machine Learning
+
+- Data Cleaning
   - Remove duplicate records
-  - Remove empty rows
+  - Remove empty records
 
-- Persian text preprocessing
-  
-  - Normalization
+- Persian Text Preprocessing
+  - Text normalization
   - Emoji removal
   - URL removal
   - Finglish removal
   - Stopword removal
 
 - Feature Extraction
-  
   - CountVectorizer
   - TF-IDF Vectorizer
 
 - Machine Learning Models
-  
-  - Logistic Regression ✅ (Best Model)
+  - Logistic Regression ✅
   - K-Nearest Neighbors (KNN)
   - Decision Tree
   - Random Forest
 
 - Evaluation Metrics
-  
   - Accuracy
   - Precision
   - Recall
   - F1-Score
 
-- Export trained model using Pickle
+- Export trained model and vectorizer using Pickle
 
 ---
 
-Django Application
+## 🌐 Django Web Application
 
 - Load trained model and vectorizer
 - Apply identical preprocessing pipeline
-- Single text prediction
-- Batch prediction
-- Positive & Negative probability scores
+- Single prediction mode
+- Batch prediction mode
+- Positive & Negative confidence scores
 - Local prediction history
 - CSV export
-- Responsive UI
+- Responsive design
 - Smooth animations
-- Dark theme
+- Dark mode interface
 
 ---
 
-🧠 Machine Learning Workflow
+# 🔄 Project Workflow
 
+```text
                     SnappFood Reviews
                             │
                             ▼
@@ -126,115 +158,124 @@ Django Application
                     │
                     ▼
              Real-time Predictions
+```
 
 ---
 
-📊 Model Comparison
+# 📊 Model Comparison
 
-Model| Accuracy| Precision| Recall| F1-Score
-Logistic Regression| 82%| —| —| —
-KNN| —| —| —| —
-Decision Tree| —| —| —| —
-Random Forest| —| —| —| —
+| Model | Accuracy | Precision | Recall | F1-Score |
+|--------|:--------:|:---------:|:------:|:--------:|
+| Logistic Regression | **82%** | — | — | — |
+| K-Nearest Neighbors | — | — | — | — |
+| Decision Tree | — | — | — | — |
+| Random Forest | — | — | — | — |
 
-«Replace the remaining values with your evaluation results.»
+> Replace the remaining values with your evaluation results.
 
 ---
 
-📂 Project Structure
+# 📁 Project Structure
 
+```text
 Persian-Sentiment-Analysis/
 │
+├── assets/
+│   ├── banner.png
+│   ├── home.png
+│   ├── prediction.png
+│   ├── batch.png
+│   └── history.png
+│
+├── demo/
+│   └── demo.gif
+│
 ├── notebooks/
-│   ├── sentiment_analysis.ipynb
-│   └── dataset.csv
+│   └── sentiment_analysis.ipynb
 │
 ├── models/
 │   ├── model.pkl
 │   └── vectorizer.pkl
 │
 ├── django_app/
-│   ├── manage.py
-│   ├── app/
-│   ├── templates/
-│   ├── static/
-│   └── requirements.txt
 │
-├── screenshots/
+├── requirements.txt
 │
-├── README.md
-└── LICENSE
+└── README.md
+```
 
 ---
 
-🚀 Quick Start
+# 🚀 Quick Start
 
-Clone the Repository
+### Clone the Repository
 
+```bash
 git clone https://github.com/yourusername/Persian-Sentiment-Analysis.git
 
 cd Persian-Sentiment-Analysis
+```
 
----
+### Install Dependencies
 
-Install Requirements
-
+```bash
 pip install -r requirements.txt
+```
 
----
+### Run Django
 
-Run Django
-
+```bash
 python manage.py migrate
 
 python manage.py runserver
+```
 
 Open your browser:
 
+```
 http://127.0.0.1:8000
+```
 
 ---
 
-🖼️ Application Screenshots
+# 🖼️ Application Screenshots
 
-Home Page
+## 🏠 Home Page
 
-[ Screenshot Here ]
-
----
-
-Prediction Result
-
-[ Screenshot Here ]
+![Home](assets/home.png)
 
 ---
 
-Batch Prediction
+## 🔍 Prediction Result
 
-[ Screenshot Here ]
-
----
-
-Prediction History
-
-[ Screenshot Here ]
+![Prediction](assets/prediction.png)
 
 ---
 
-🧪 Dataset
+## 📂 Batch Prediction
 
-- Source: SnappFood User Reviews
-- Language: Persian
-- Records: 2,400
-- Binary Sentiment Classification
-
-Label| Meaning
-0| Positive
-1| Negative
+![Batch](assets/batch.png)
 
 ---
 
-🛠 Technologies
+## 📜 Prediction History
+
+![History](assets/history.png)
+
+---
+
+# 📊 Dataset
+
+| Property | Value |
+|----------|-------|
+| Dataset | SnappFood Reviews |
+| Language | Persian |
+| Samples | 2,400 |
+| Classes | Binary Sentiment |
+
+---
+
+# 🛠️ Technologies
 
 - Python
 - Scikit-learn
@@ -243,34 +284,34 @@ Label| Meaning
 - Hazm
 - Pickle
 - Django
-- HTML
-- CSS
+- HTML5
+- CSS3
 - JavaScript
 
 ---
 
-📈 Future Improvements
+# 🚀 Future Improvements
 
-- Deep Learning models (LSTM / BiLSTM)
-- Transformer-based models (ParsBERT / BERT)
+- Deep Learning (LSTM / BiLSTM)
+- Transformer Models (ParsBERT / BERT)
 - REST API with Django REST Framework
-- Docker support
-- User authentication
-- PostgreSQL integration
-- Deployment on cloud platforms
-- Real-time analytics dashboard
-- Explainable AI (feature importance and prediction interpretation)
+- Docker Support
+- PostgreSQL Integration
+- User Authentication
+- Cloud Deployment
+- Explainable AI (XAI)
+- Interactive Analytics Dashboard
 
 ---
 
-📜 License
+# 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the **MIT License**.
 
 ---
 
-👨💻 Author
+# 👨💻 Author
 
-Kiarash
+**Kiarash**
 
-If you found this project helpful, consider giving it a ⭐ on GitHub.
+If you found this project useful, consider giving it a ⭐ on GitHub!
