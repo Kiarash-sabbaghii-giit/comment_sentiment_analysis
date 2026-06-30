@@ -39,7 +39,7 @@ A quick walkthrough of the complete workflow, including:
 
 <br>
 
-<img src="[demo/demo.gif](https://github.com/Kiarash-sabbaghii-giit/comment_sentiment_analysis/blob/main/demo.gif)" alt="Application Demo" width="100%">
+<img src="[demo/demo.gif]" alt="Application Demo" width="100%">
 
 </div>
 
