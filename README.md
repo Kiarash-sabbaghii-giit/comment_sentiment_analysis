@@ -1,5 +1,4 @@
 <p align="center">
-  <img src="assets/banner.png" alt="Persian Sentiment Analysis Banner">
 </p>
 
 <h1 align="center">🇮🇷 Persian Sentiment Analysis</h1>
